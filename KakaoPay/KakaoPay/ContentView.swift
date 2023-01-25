@@ -66,7 +66,6 @@ struct ContentView: View {
             BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())
             BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
         }
-        .frame(height: 420)
         .padding()
     }
 }

@@ -16,9 +16,8 @@ struct BoxGridLayout: Layout {
         guard !subviews.isEmpty else { return }
         
         let rowitemCount = 3
-        
         let spacing: CGFloat = 10
-        let length = (bounds.width - spacing * 2) / CGFloat(rowitemCount)
+        let length = (bounds.width - spacing * CGFloat((rowitemCount - 1))) / CGFloat(rowitemCount)
         
         var x = bounds.minX
         var y = bounds.minY
@@ -27,7 +26,7 @@ struct BoxGridLayout: Layout {
             subviews[index].place(at: CGPoint(x: x, y: y),
                                   anchor: .topLeading,
                                   proposal: ProposedViewSize(CGSize(width: length, height: length)))
-            if index % rowitemCount == 2 {
+            if index % rowitemCount == rowitemCount - 1 {
                 x = bounds.minX
                 y += length + spacing
             } else {

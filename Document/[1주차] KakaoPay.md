@@ -1,10 +1,11 @@
 ## 1주차 카카오페이💰
 
-[전체 코드👻](https://github.com/I-Swift-UI/yangsubinn/tree/main/KakaoPay/KakaoPay)
+[전체 코드](https://github.com/I-Swift-UI/yangsubinn/tree/main/KakaoPay/KakaoPay)
 
-| 구현하려던 UI | 구현한 UI |
-|--|--|
-| <img src="https://user-images.githubusercontent.com/81167570/214290079-0619d26a-6466-4c1d-b72d-6cac74c3e6fe.jpg" width=300 /> |  <img width="300" alt="스크린샷 2023-01-24 오후 8 50 13" src="https://user-images.githubusercontent.com/81167570/214289481-087828f6-06cf-4d65-949a-dd8a57d153c2.png">|
+| 구현하려던 UI | 구현한 UI(BoxLayout) | 추가 구현한 UI(BoxRowLayout) | 추가 구현한 UI(BoxGridLayout) |
+|--|--|--|--|
+| <img src="https://user-images.githubusercontent.com/81167570/214290079-0619d26a-6466-4c1d-b72d-6cac74c3e6fe.jpg" width=300 /> | <img width="300" alt="스크린샷 2023-01-25 오후 11 45 07" src="https://user-images.githubusercontent.com/81167570/214593710-91c38ff3-ae1f-40f6-8dfb-7436eeba782d.png"> | <img width="300" alt="스크린샷 2023-01-25 오후 11 45 56" src="https://user-images.githubusercontent.com/81167570/214593892-b2bd00a7-d655-473c-b00c-b052ba5e27e4.png"> |  <img width="300" alt="스크린샷 2023-01-25 오후 11 46 26" src="https://user-images.githubusercontent.com/81167570/214594013-dcdc0df0-3f40-4482-a8e3-8669406f62f5.png">  |
+
 
 
 ### 1️⃣ BoxView
@@ -80,8 +81,7 @@ struct BoxModifier: ViewModifier {
 
 ### 2️⃣ contentView 안에서 레이아웃 적용
 
-stack뷰의 조합으로 만들어보려 했는데, 
-직접 frame 사이즈를 이런 식으로 적용하는건 비효율적인 것 같아서 Layout으로 수정    
+stack뷰의 조합으로 만들어보려 했는데, 각각의 frame 사이즈를 이런 직접적으로 적용하는건 비효율적인 것 같아서 Layout으로 수정    
 <img width="300" alt="스크린샷 2023-01-24 오후 3 53 58" src="https://user-images.githubusercontent.com/81167570/214289364-0d53c87e-da5d-4cdb-a330-b0b46e460755.png">
 
 ```swift
@@ -121,3 +121,107 @@ BoxLayout {
 .padding()
 .frame(height: 420)
 ```
+
+### 4️⃣ 추가 Layout 커스텀
+
+#### BoxRowLayout
+<img width="300" alt="스크린샷 2023-01-25 오후 11 45 56" src="https://user-images.githubusercontent.com/81167570/214593892-b2bd00a7-d655-473c-b00c-b052ba5e27e4.png">
+
+```swift
+struct BoxRowLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        proposal.replacingUnspecifiedDimensions()
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        
+        let subviewsCount: CGFloat = 3
+        
+        let spacing: CGFloat = 10
+        let size = CGSize(width: (bounds.width - spacing * 2) / subviewsCount, height: bounds.height)
+        
+        var x = bounds.minX
+        
+        for index in subviews.indices {
+            subviews[index].place(at: CGPoint(x: x, y: bounds.minY),
+                                  anchor: .topLeading,
+                                  proposal: ProposedViewSize(size))
+            x += size.width + spacing
+        }
+    }
+}
+```
+
+```swift
+VStack(spacing: 10) {
+    BoxView(title: "16P", subTitle: "카카오페이포인트", boxType: .recentPayment).modifier(BoxModifier())
+        .frame(height: 140)
+    BoxRowLayout {
+        BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
+        BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
+        BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())
+    }
+    .frame(height: 140)
+    BoxRowLayout {
+        BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
+        BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
+        BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())
+    }
+    .frame(height: 140)
+}
+.padding()
+```
+
+
+#### BoxGridLayout
+<img width="300" alt="스크린샷 2023-01-26 오전 12 01 18" src="https://user-images.githubusercontent.com/81167570/214597768-621ab6c8-af35-475a-a5c3-5920e55770c4.png"> <img width="300" alt="스크린샷 2023-01-26 오전 12 03 33" src="https://user-images.githubusercontent.com/81167570/214598211-696d5234-3145-48ac-a2bb-3aaf63bd122c.png">
+
+
+
+```swift
+struct BoxGridLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        proposal.replacingUnspecifiedDimensions()
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        
+        let rowitemCount = 3
+        let spacing: CGFloat = 10
+        let length = (bounds.width - spacing * CGFloat((rowitemCount - 1))) / CGFloat(rowitemCount)
+        
+        var x = bounds.minX
+        var y = bounds.minY
+        
+        for index in subviews.indices {
+            subviews[index].place(at: CGPoint(x: x, y: y),
+                                  anchor: .topLeading,
+                                  proposal: ProposedViewSize(CGSize(width: length, height: length)))
+            if index % rowitemCount == rowitemCount - 1 {
+                x = bounds.minX
+                y += length + spacing
+            } else {
+                x += length + spacing
+            }
+        }
+    }
+}
+
+```
+
+```swift
+BoxGridLayout {
+    BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())
+    BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
+}
+.padding()
+```
+
+

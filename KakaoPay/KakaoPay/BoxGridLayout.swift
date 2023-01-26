@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct BoxGridLayout: Layout {
+    
+    let rowitemCount: Int
+    
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         proposal.replacingUnspecifiedDimensions()
     }
@@ -15,7 +18,6 @@ struct BoxGridLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
         
-        let rowitemCount = 3
         let spacing: CGFloat = 10
         let length = (bounds.width - spacing * CGFloat((rowitemCount - 1))) / CGFloat(rowitemCount)
         

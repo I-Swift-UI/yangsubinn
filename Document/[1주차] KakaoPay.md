@@ -17,9 +17,7 @@ enum BoxType {
     case normal // 검정색, 작은 박스
     case recentPayment // 검정색, 하단 가장 최근 결제
 }
-```
 
-```swift
 struct BoxView: View {
     var title: String
     var subTitle: String
@@ -179,6 +177,9 @@ VStack(spacing: 10) {
 
 ```swift
 struct BoxGridLayout: Layout {
+
+    let rowitemCount: Int
+    
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         proposal.replacingUnspecifiedDimensions()
     }
@@ -186,7 +187,6 @@ struct BoxGridLayout: Layout {
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         guard !subviews.isEmpty else { return }
         
-        let rowitemCount = 3
         let spacing: CGFloat = 10
         let length = (bounds.width - spacing * CGFloat((rowitemCount - 1))) / CGFloat(rowitemCount)
         
@@ -210,7 +210,7 @@ struct BoxGridLayout: Layout {
 ```
 
 ```swift
-BoxGridLayout {
+BoxGridLayout(rowitemCount: 3) {
     BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
     BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
     BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())

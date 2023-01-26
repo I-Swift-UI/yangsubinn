@@ -56,7 +56,7 @@ struct ContentView: View {
         .padding()
         
         // BoxGridLayout
-        BoxGridLayout {
+        BoxGridLayout(rowitemCount: 3) {
             BoxView(title: "선택하기", subTitle: "송금", boxType: .normal).modifier(BoxModifier())
             BoxView(title: "선택하기", subTitle: "결제", boxType: .normal).modifier(BoxModifier())
             BoxView(title: "iTunes&App Store", subTitle: "3,000원", boxType: .normal).modifier(BoxModifier())

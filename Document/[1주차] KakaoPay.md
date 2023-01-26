@@ -11,6 +11,10 @@
 ### 1️⃣ BoxView
 BoxView를 BoxType으로 나누어 UI 적용
 
+
+<img width="600" alt="스크린샷 2023-01-26 오후 9 34 08" src="https://user-images.githubusercontent.com/81167570/214837156-0f02e882-5e55-4484-9275-14196393c33f.png">
+
+
 ```swift
 enum BoxType {
     case large // 노랑색, 금액 나오는 가장 큰 박스
@@ -77,6 +81,8 @@ struct BoxModifier: ViewModifier {
 }
 ```
 
+
+
 ### 2️⃣ contentView 안에서 레이아웃 적용
 
 stack뷰의 조합으로 만들어보려 했는데, 각각의 frame 사이즈를 이런 직접적으로 적용하는건 비효율적인 것 같아서 Layout으로 수정    
@@ -100,12 +106,65 @@ VStack {
 .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
 ```
 
+
+
 ### 3️⃣ Layout 커스텀
 
 [WWDC 영상](https://developer.apple.com/videos/play/wwdc2022/10056/?time=709) 참고
 
 *iOS 16.0부터 사용 가능     
 <img width="697" alt="스크린샷 2023-01-24 오후 8 52 07" src="https://user-images.githubusercontent.com/81167570/214289521-19b16ea0-6d3c-4884-b9e2-3284ff025a4a.png">
+
+<img width="600" alt="스크린샷 2023-01-26 오후 9 42 40" src="https://user-images.githubusercontent.com/81167570/214838213-a7e22f0e-b35c-423f-9114-a191f83c0735.png">
+
+```swift
+// Layout, ProposedViewSize 16.0부터 가능
+struct BoxLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        proposal.replacingUnspecifiedDimensions()
+    }
+    
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard !subviews.isEmpty else { return }
+        
+        let spacing: CGFloat = 10
+        let minSize = CGSize(width: (bounds.width - spacing * 2) / 3, height: (bounds.height - spacing * 2) / 3)
+        let midSize = CGSize(width: bounds.width, height: minSize.height)
+        let maxSize = CGSize(width: minSize.width * 2 + spacing, height: minSize.height * 2 + spacing)
+        
+        let x = bounds.minX
+        let y = bounds.minY
+        
+        var sizeProposal = ProposedViewSize(maxSize)
+        
+        for index in subviews.indices {
+            switch index {
+            case 0:
+                subviews[index].place(at: CGPoint(x: x, y: y),
+                                      anchor: .topLeading,
+                                      proposal: sizeProposal)
+            case 1:
+                sizeProposal = ProposedViewSize(minSize)
+                subviews[index].place(at: CGPoint(x: x + maxSize.width + spacing, y: y),
+                                      anchor: .topLeading,
+                                      proposal: sizeProposal)
+            case 2:
+                sizeProposal = ProposedViewSize(minSize)
+                subviews[index].place(at: CGPoint(x: x + maxSize.width + spacing, y: y + minSize.height + spacing),
+                                      anchor: .topLeading,
+                                      proposal: sizeProposal)
+            case 3:
+                sizeProposal = ProposedViewSize(midSize)
+                subviews[index].place(at: CGPoint(x: x, y: y + maxSize.height + spacing),
+                                      anchor: .topLeading,
+                                      proposal: sizeProposal)
+            default:
+                break
+            }
+        }
+    }
+}
+```
 
 ```swift
 BoxLayout {
@@ -117,6 +176,8 @@ BoxLayout {
 .padding()
 .frame(height: 420)
 ```
+
+
 
 ### 4️⃣ 추가 Layout 커스텀
 

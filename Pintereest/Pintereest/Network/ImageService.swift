@@ -10,10 +10,12 @@ import Foundation
 struct ImageService {
     static var shared = ImageService()
     
-    mutating func fetchImageSearchData(completion: @escaping (NetworkResult<Any>) -> ()) {
+    mutating func fetchImageSearchData(start: Int = 1, display: Int = 40, completion: @escaping (NetworkResult<Any>) -> ()) {
         guard var urlComponents = URLComponents(string: "https://openapi.naver.com/v1/search/image") else { return }
         
-        let query: [String: String] = ["query": "강아지"]
+        let query: [String: String] = ["query": "강아지",
+                                       "start": String(start),
+                                       "display": String(display)]
         let queryItemArray = query.map {
             URLQueryItem(name: $0.key, value: $0.value)
         }

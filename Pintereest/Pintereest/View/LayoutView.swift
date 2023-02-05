@@ -28,7 +28,7 @@ struct LayoutView: View {
             }.scrollDisabled(true)
             
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 10) {
                     ForEach(rightData, id: \.self) { item in
                         ItemView(item: item)
                     }

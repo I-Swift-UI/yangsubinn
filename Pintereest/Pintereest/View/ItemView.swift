@@ -19,6 +19,7 @@ struct ItemView: View {
                     .cornerRadius(10)
             } placeholder: {
                 Text("준비 중")
+                    .foregroundColor(Color.gray)
             }
             Text(item.title)
                 .font(.caption)

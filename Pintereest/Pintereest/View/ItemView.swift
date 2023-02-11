@@ -23,6 +23,7 @@ struct ItemView: View {
             }
             Text(item.title)
                 .font(.caption)
+                .lineLimit(1)
         }
     }
 }

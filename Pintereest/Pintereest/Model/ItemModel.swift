@@ -8,6 +8,8 @@
 import Foundation
 
 struct ItemModel: Hashable {
+    let id: Int
     let imageUrl: String
     let title: String
+    let isPinned: Bool
 }

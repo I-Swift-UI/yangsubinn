@@ -20,7 +20,7 @@ struct ImageItem: Codable {
     let thumbnail: String
     let sizeheight, sizewidth: String
     
-    func toModel() -> ItemModel {
-        return ItemModel(imageUrl: thumbnail, title: title)
+    func toModel(id: Int) -> ItemModel {
+        return ItemModel(id: id, imageUrl: thumbnail, title: title, isPinned: false)
     }
 }

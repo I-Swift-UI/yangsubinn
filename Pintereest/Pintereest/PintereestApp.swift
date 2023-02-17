@@ -12,6 +12,7 @@ struct PintereestApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(ImageData())
         }
     }
 }

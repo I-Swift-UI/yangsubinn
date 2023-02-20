@@ -14,18 +14,9 @@ struct PinnedView: View {
     
     var body: some View {
         ScrollView {
-//            LazyVStack {
-//                ForEach(Array(zip(imageData.items.indices, imageData.items)), id: \.0) { index, item in
-//                    if item.isPinned {
-//                        ItemView(item: item)
-//                    }
-//                }
-//            }
-            
-            // FIXME: - pinnedView에서 저장 취소했을때 index 꼬임
             LayoutView(imageData: imageData.items.filter({ $0.isPinned }), didReachEnd: $didReachEnd)
         }
-        .padding()
+        .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
     }
 }
 

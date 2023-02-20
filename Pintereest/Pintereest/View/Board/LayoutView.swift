@@ -20,18 +20,11 @@ struct LayoutView: View {
         LazyVStack {
             HStack(alignment: .top, spacing: 10) {
                 VStack(spacing: 10) {
-//                    ForEach(Array(zip(leftData.indices, leftData)), id: \.0) { index, item in
-//                        ItemView(item: item, index: index*2)
-//                    }
                     ForEach(leftData, id: \.self) { item in
                         ItemView(item: item)
                     }
                 }
                 VStack(spacing: 10) {
-//                    ForEach(Array(zip(rightData.indices, rightData)), id: \.0) { index, item in
-//                        ItemView(item: item, index: index*2+1)
-//                    }
-                    
                     ForEach(rightData, id: \.self) { item in
                         ItemView(item: item)
                     }

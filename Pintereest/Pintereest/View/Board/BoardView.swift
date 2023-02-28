@@ -18,7 +18,11 @@ struct BoardView: View {
             LayoutView(imageData: imageData.items, didReachEnd: $didReachEnd)
                 .onChange(of: didReachEnd) { newValue in
                     if didReachEnd {
-                        getImageData(start: startIndex) {
+//                        getImageData(start: startIndex) {
+//                            didReachEnd = false
+//                        }
+                        Task {
+                            await getImageDataConcurrency(start: startIndex)
                             didReachEnd = false
                         }
                     }
@@ -27,7 +31,11 @@ struct BoardView: View {
         .padding(EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16))
         .onAppear {
             if didReachEnd {
-                getImageData {
+//                getImageData {
+//                    didReachEnd = false
+//                }
+                Task {
+                    await getImageDataConcurrency()
                     didReachEnd = false
                 }
             }
@@ -52,6 +60,29 @@ struct BoardView: View {
             default:
                 print("❌", response)
             }
+        }
+    }
+    
+    /// 이미지 받아오는 서버 통신 함수 + Swift Concurrency
+    func getImageDataConcurrency(start: Int = 1, display: Int = 10) async {
+        do {
+            let result = try await ImageService.shared.fetchImageSearchDataConcurrency(start: start, display: display)
+
+            switch result {
+            case .success(let data):
+                let itemCount = imageData.items.count
+                let models = (data as! ImageEntity).items.enumerated().map {
+                    $0.element.toModel(id: $0.offset + (itemCount == 0 ? 0 : itemCount))
+                }
+                DispatchQueue.main.async {
+                    imageData.items.append(contentsOf: models)
+                    startIndex += display
+                }
+            default:
+                print("❌ getImageData", result)
+            }
+        } catch {
+            print("❌❌")
         }
     }
 }
